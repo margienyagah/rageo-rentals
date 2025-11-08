@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Listing | Rageo Rentals</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f7f7f7; }
+    form { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 8px; }
+    input, button { width: 100%; margin-top: 10px; padding: 10px; }
+    button { background: #007BFF; color: white; border: none; cursor: pointer; }
+    button:hover { background: #0056b3; }
+  </style>
+</head>
+<body>
+
+  <h2>Add New Property Listing</h2>
+  <form id="listingForm">
+    <input type="text" id="title" placeholder="Property Title" required>
+    <input type="text" id="location" placeholder="Location" required>
+    <input type="text" id="price" placeholder="Price" required>
+    <input type="file" id="image" accept="image/*" required>
+    <button type="submit">Upload Listing</button>
+  </form>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBOoGvZDvzp-CHLVllJAujTdo84vxcz_hM",
+  authDomain: "rageo-rentals.firebaseapp.com",
+  projectId: "rageo-rentals",
+  storageBucket: "rageo-rentals.firebasestorage.app",
+  messagingSenderId: "852750794253",
+  appId: "1:852750794253:web:834cfb626ada31578f1f44"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+    // --- Cloudinary details ---
+    const cloudName = "dx4akb9b0";
+    const uploadPreset = "rageo_unsigned";
+
+    // --- Form logic ---
+    const form = document.getElementById('listingForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById('title').value;
+      const location = document.getElementById('location').value;
+      const price = document.getElementById('price').value;
+      const file = document.getElementById('image').files[0];
+
+      // Upload image to Cloudinary
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", uploadPreset);
+
+      const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: "POST",
+        body: formData
+      });
+      const cloudData = await cloudRes.json();
+      const imageUrl = cloudData.secure_url;
+
+      // Save data to Firestore
+      await addDoc(collection(db, "listings"), {
+        title, location, price, image: imageUrl, created: new Date()
+      });
+
+      alert("Listing added successfully!");
+      form.reset();
+    });
+  </script>
+</body>
+</html>
