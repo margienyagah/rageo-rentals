@@ -19,6 +19,7 @@
     <input type="text" id="title" placeholder="Property Title" required>
     <input type="text" id="location" placeholder="Location" required>
     <input type="text" id="price" placeholder="Price" required>
+    <textarea id="description" placeholder="Write a short description (e.g. 2-bedroom apartment with parking and Wi-Fi)" rows="4" required></textarea>
     <input type="file" id="image" accept="image/*" required>
     <button type="submit">Upload Listing</button>
   </form>
@@ -57,6 +58,7 @@ const app = initializeApp(firebaseConfig);
       const title = document.getElementById('title').value;
       const location = document.getElementById('location').value;
       const price = document.getElementById('price').value;
+      const description = document.getElementById('description').value;
       const file = document.getElementById('image').files[0];
 
       // Upload image to Cloudinary
@@ -82,3 +84,4 @@ const app = initializeApp(firebaseConfig);
   </script>
 </body>
 </html>
+
