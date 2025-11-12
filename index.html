@@ -3,51 +3,178 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rageo Rentals | Verified Houses for Rent</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Rageo Rentals | Verified Houses for Rent in Kenya</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #fafafa;
+      color: #333;
+    }
+
+    /* --- Header --- */
+    header {
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    header img {
+      height: 60px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.8em;
+      color: #333;
+    }
+
+    /* --- Hero Section --- */
+    .hero {
+      background-image: url('https://res.cloudinary.com/demo/image/upload/v1698765432/modern-house-banner.jpg');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      height: 360px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    }
+
+    .hero h2 {
+      font-size: 2.2em;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      font-size: 1.1em;
+      margin: 0;
+    }
+
+    /* --- Buttons --- */
+    .buttons {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .buttons a {
+      display: inline-block;
+      margin: 6px;
+      padding: 10px 18px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      color: white;
+      transition: 0.3s;
+    }
+
+    .btn-add { background: #28a745; }
+    .btn-add:hover { background: #218838; }
+
+    .btn-site { background: #007bff; }
+    .btn-site:hover { background: #0069d9; }
+
+    .btn-call { background: #ff6600; }
+    .btn-call:hover { background: #e65c00; }
+
+    /* --- Listings --- */
+    main {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .listing {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      width: 280px;
+      margin: 10px;
+      background: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .listing img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .listing .details {
+      padding: 10px;
+    }
+
+    /* --- Footer --- */
+    footer {
+      background: #f2f2f2;
+      text-align: center;
+      padding: 15px;
+      margin-top: 20px;
+    }
+
+    footer a {
+      color: #1877f2;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
+
 <body>
- <header>
-  <h1>
-    <div style="text-align:center; margin-top:15px;">
-  <a href="tel:+254726028077" style="
-      display:inline-block;
-      background:#28a745;
-      color:white;
-      padding:10px 20px;
-      border-radius:5px;
-      text-decoration:none;
-      font-weight:bold;
-      box-shadow:0 2px 5px rgba(0,0,0,0.15);
-  ">
-    📞 Call Now: +254 726 028 077
-  </a>
-</div>
-  <img src="logo.jpg" alt="Rageo Rentals Logo" style="height:60px; vertical-align:middle; margin-right:10px;">
-  Rageo Rentals
-</h1>
-  <p>Find verified houses for rent in Kenya.</p>
-  <div style="margin-top:10px;">
-    <a href="add-listing.html" style="background:#28a745;color:white;padding:8px 12px;border-radius:5px;text-decoration:none;margin-right:8px;">➕ Add Listing</a>
-    <a href="https://rageoproperties.co.ke" target="_blank" style="background:#007bff;color:white;padding:8px 12px;border-radius:5px;text-decoration:none;">🌐 Visit Main Site</a>
+
+  <!-- Header -->
+  <header>
+    <img src="logo.jpg" alt="Rageo Rentals Logo">
+    <h1>Rageo Rentals</h1>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h2>Find Your Dream Home</h2>
+    <p>Verified Rentals Across Kenya</p>
+  </section>
+
+  <!-- Buttons -->
+  <div class="buttons">
+    <a href="add-listing.html" class="btn-add">➕ Add Listing</a>
+    <a href="https://rageoproperties.co.ke" target="_blank" class="btn-site">🌐 Visit Main Site</a>
+    <a href="tel:+254726028077" class="btn-call">📞 Call Now</a>
   </div>
-</header>
-<main>
-  <div id="listings"></div>
-</main>
 
-<footer style="background:#f2f2f2;text-align:center;padding:15px;margin-top:20px;">
-  <p>© 2025 Rageo Properties. All rights reserved.</p>
-  <p>
-    <a href="https://www.facebook.com/profile.php?id=100069511291857" target="_blank" style="text-decoration:none;color:#1877f2;">
-      👍 Follow us on Facebook
-    </a>
-  </p>
-</footer>
+  <!-- Listings Section -->
+  <main>
+    <div id="listings">Loading listings...</div>
+  </main>
 
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 Rageo Properties. All rights reserved.</p>
+    <p>
+      <a href="https://www.facebook.com/profile.php?id=100069511291857" target="_blank">
+        👍 Follow us on Facebook
+      </a>
+    </p>
+  </footer>
+
+  <!-- Firebase App -->
   <script type="module" src="app.js"></script>
 </body>
 </html>
+
+
 
 
 
