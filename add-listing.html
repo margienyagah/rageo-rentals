@@ -23,67 +23,73 @@
     <button type="submit">Upload Listing</button>
   </form>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    // --- Firebase config ---
-    const firebaseConfig = {
-      apiKey: "AIzaSyBOoGvZDvzp-CHLVllJAujTdo84vxcz_hM",
-      authDomain: "rageo-rentals.firebaseapp.com",
-      projectId: "rageo-rentals",
-    };
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+// --- Firebase Config ---
+const firebaseConfig = {
+  apiKey: "AIzaSyBOoGvZDvzp-CHLVllJAujTdo84vxcz_hM",
+  authDomain: "rageo-rentals.firebaseapp.com",
+  projectId: "rageo-rentals",
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-    // --- Cloudinary details ---
-    const cloudName = "dx4akb9b0";
-    const uploadPreset = "rageo_unsigned";
+// --- Cloudinary Details ---
+const cloudName = "dx4akb9b0";
+const uploadPreset = "rageo_unsigned";
 
-    // --- Upload form logic ---
-    const form = document.getElementById("listingForm");
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+// --- Upload Form Logic ---
+const form = document.getElementById("listingForm");
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-      const title = document.getElementById("title").value;
-      const location = document.getElementById("location").value;
-      const price = document.getElementById("price").value;
-      const description = document.getElementById("description").value;
-      const file = document.getElementById("image").files[0];
+  const title = document.getElementById("title").value;
+  const location = document.getElementById("location").value;
+  const price = document.getElementById("price").value;
+  const description = document.getElementById("description").value;
+  const files = document.getElementById("images").files;
 
-      if (!file) {
-        alert("Please select an image first.");
-        return;
-      }
+  if (files.length === 0) {
+    alert("Please upload at least one image.");
+    return;
+  }
 
-      // Upload image to Cloudinary
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", uploadPreset);
+  const imageUrls = [];
 
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-        method: "POST",
-        body: formData
-      });
-      const data = await res.json();
-      const imageUrl = data.secure_url;
+  // Upload each selected file to Cloudinary
+  for (let i = 0; i < files.length; i++) {
+    const formData = new FormData();
+    formData.append("file", files[i]);
+    formData.append("upload_preset", uploadPreset);
 
-      // Save listing in Firestore
-      await addDoc(collection(db, "listings"), {
-        title,
-        location,
-        price,
-        description,
-        image: imageUrl,
-        created: new Date()
-      });
-
-      alert("✅ Listing added successfully!");
-      form.reset();
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+      method: "POST",
+      body: formData
     });
+
+    const data = await res.json();
+    imageUrls.push(data.secure_url);
+  }
+
+  // Save listing to Firestore
+  await addDoc(collection(db, "listings"), {
+    title,
+    location,
+    price,
+    description,
+    images: imageUrls, // store as array
+    created: new Date()
+  });
+
+  alert("✅ Listing added successfully!");
+  form.reset();
+});
+
   </script>
 </body>
 </html>
+
 
 
 
