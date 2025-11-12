@@ -34,56 +34,30 @@
       color: #333;
     }
 
-  <!-- Hero Slideshow -->
-<section class="hero-slideshow">
-  <div class="slide active" style="background-image:url('hero1.jpg');"></div>
-  <div class="slide" style="background-image:url('hero2.jpg');"></div>
-  <div class="slide" style="background-image:url('hero3.jpg');"></div>
-  <div class="hero-text">
-    <h2>Find Your Dream Home</h2>
-    <p>Verified Rentals Across Kenya</p>
-  </div>
-</section>
+    /* --- Hero Section --- */
+    .hero {
+      background-image: url('https://res.cloudinary.com/demo/image/upload/v1698765432/modern-house-banner.jpg');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      height: 360px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    }
 
-<style>
-  .hero-slideshow {
-    position: relative;
-    height: 360px;
-    overflow: hidden;
-  }
-  .slide {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    opacity: 0;
-    transition: opacity 1.5s ease-in-out;
-  }
-  .slide.active {
-    opacity: 1;
-  }
-  .hero-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    color: white;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
-  }
-</style>
+    .hero h2 {
+      font-size: 2.2em;
+      margin-bottom: 10px;
+    }
 
-<script>
-  // Simple slideshow
-  let slideIndex = 0;
-  const slides = document.querySelectorAll('.slide');
-  setInterval(() => {
-    slides[slideIndex].classList.remove('active');
-    slideIndex = (slideIndex + 1) % slides.length;
-    slides[slideIndex].classList.add('active');
-  }, 5000);
-</script>
+    .hero p {
+      font-size: 1.1em;
+      margin: 0;
+    }
 
     /* --- Buttons --- */
     .buttons {
@@ -317,45 +291,6 @@
 </body>
 </html>
 
-
-  <!-- Header -->
-  <header>
-    <img src="logo.jpg" alt="Rageo Rentals Logo">
-    <h1>Rageo Rentals</h1>
-  </header>
-
-  <!-- Hero Section -->
-  <section class="hero">
-    <h2>Find Your Dream Home</h2>
-    <p>Verified Rentals Across Kenya</p>
-  </section>
-
-  <!-- Buttons -->
-  <div class="buttons">
-    <a href="add-listing.html" class="btn-add">➕ Add Listing</a>
-    <a href="https://rageoproperties.co.ke" target="_blank" class="btn-site">🌐 Visit Main Site</a>
-    <a href="tel:+254726028077" class="btn-call">📞 Call Now</a>
-  </div>
-
-  <!-- Listings Section -->
-  <main>
-    <div id="listings">Loading listings...</div>
-  </main>
-
-  <!-- Footer -->
-  <footer>
-    <p>© 2025 Rageo Properties. All rights reserved.</p>
-    <p>
-      <a href="https://www.facebook.com/profile.php?id=100069511291857" target="_blank">
-        👍 Follow us on Facebook
-      </a>
-    </p>
-  </footer>
-
-  <!-- Firebase App -->
-  <script type="module" src="app.js"></script>
-</body>
-</html>
 
 
 
