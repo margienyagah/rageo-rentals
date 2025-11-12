@@ -50,12 +50,14 @@ if (data.images && data.images.length > 0) {
       `</div>`;
   }
 }
-          <h3>${data.title}</h3>
-          <p><strong>Location:</strong> ${data.location}</p>
-          <p><strong>Price:</strong> ${data.price}</p>
-          <p>${data.description}</p>
-        `;
-        listingsGrid.appendChild(card);
+   card.innerHTML = `
+  ${imageGallery}
+  <h3>${data.title}</h3>
+  <p><strong>Location:</strong> ${data.location}</p>
+  <p><strong>Price:</strong> ${data.price}</p>
+  <p>${data.description}</p>
+`;
+ listingsGrid.appendChild(card);
       });
     }
 
@@ -63,4 +65,5 @@ if (data.images && data.images.length > 0) {
   </script>
 </body>
 </html>
+
 
