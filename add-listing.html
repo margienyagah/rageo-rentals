@@ -75,7 +75,12 @@
       const title = document.getElementById("title").value;
       const location = document.getElementById("location").value;
       const price = document.getElementById("price").value;
-      const description = document.getElementById("description").value;
+      const description = document.getElementById("description").value;// Prevent phone numbers in the description
+const phonePattern = /\+?\d{3,}/g;
+if (phonePattern.test(description)) {
+  alert("❌ Please do not include phone numbers in the description. Clients will contact us directly.");
+  return;
+}
       const files = document.getElementById("images").files;
 
       if (files.length === 0) {
@@ -114,5 +119,6 @@
   </script>
 </body>
 </html>
+
 
 
