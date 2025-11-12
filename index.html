@@ -101,54 +101,16 @@
       background: white;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       overflow: hidden;
-      position: relative;
     }
 
-    .carousel {
-      position: relative;
-      width: 100%;
-      height: 180px;
-      overflow: hidden;
-    }
-
-    .carousel img {
+    .listing img {
       width: 100%;
       height: 180px;
       object-fit: cover;
-      display: none;
     }
-
-    .carousel img.active {
-      display: block;
-    }
-
-    .carousel button {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0, 0, 0, 0.5);
-      color: white;
-      border: none;
-      font-size: 18px;
-      padding: 4px 8px;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-
-    .carousel .prev { left: 5px; }
-    .carousel .next { right: 5px; }
 
     .listing .details {
       padding: 10px;
-    }
-
-    .listing .details h3 {
-      margin: 5px 0;
-    }
-
-    .listing .details p {
-      margin: 3px 0;
-      font-size: 0.9em;
     }
 
     /* --- Footer --- */
@@ -208,88 +170,11 @@
   </footer>
 
   <!-- Firebase App -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBOoGvZDvzp-CHLVllJAujTdo84vxcz_hM",
-      authDomain: "rageo-rentals.firebaseapp.com",
-      projectId: "rageo-rentals",
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    const listingsDiv = document.getElementById("listings");
-
-    async function loadListings() {
-      listingsDiv.innerHTML = "<p>Loading listings...</p>";
-      const q = query(collection(db, "listings"), orderBy("created", "desc"));
-      const snapshot = await getDocs(q);
-
-      if (snapshot.empty) {
-        listingsDiv.innerHTML = "<p>No properties available yet. Check back soon!</p>";
-        return;
-      }
-
-      listingsDiv.innerHTML = "";
-
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        const listing = document.createElement("div");
-        listing.classList.add("listing");
-
-        // Create carousel HTML for multiple images
-        let imagesHTML = "";
-        if (Array.isArray(data.images)) {
-          imagesHTML = data.images
-            .map((img, i) => `<img src="${img}" class="${i === 0 ? 'active' : ''}" alt="${data.title}">`)
-            .join("");
-        } else if (data.image) {
-          imagesHTML = `<img src="${data.image}" class="active" alt="${data.title}">`;
-        }
-
-        listing.innerHTML = `
-          <div class="carousel">
-            ${imagesHTML}
-            <button class="prev">❮</button>
-            <button class="next">❯</button>
-          </div>
-          <div class="details">
-            <h3>${data.title}</h3>
-            <p><strong>Location:</strong> ${data.location}</p>
-            <p><strong>Price:</strong> ${data.price}</p>
-            <p>${data.description || ""}</p>
-          </div>
-        `;
-
-        listingsDiv.appendChild(listing);
-
-        // --- Add simple carousel logic ---
-        const images = listing.querySelectorAll(".carousel img");
-        let index = 0;
-
-        const showImage = (n) => {
-          images.forEach((img, i) => img.classList.toggle("active", i === n));
-        };
-
-        listing.querySelector(".next").addEventListener("click", () => {
-          index = (index + 1) % images.length;
-          showImage(index);
-        });
-
-        listing.querySelector(".prev").addEventListener("click", () => {
-          index = (index - 1 + images.length) % images.length;
-          showImage(index);
-        });
-      });
-    }
-
-    loadListings();
-  </script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
+
+
 
 
 
