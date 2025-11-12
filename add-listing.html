@@ -37,17 +37,19 @@
   </style>
 </head>
 <body>
-
-  <h2>Add Property Listing</h2>
-
-  <form id="listingForm">
-    <input type="text" id="title" placeholder="Property Title" required>
-    <input type="text" id="location" placeholder="Location" required>
-    <input type="text" id="price" placeholder="Price (e.g. 65,000 KES/month)" required>
-    <textarea id="description" placeholder="Description (e.g. 2-bedroom apartment near Yaya Centre)" rows="4" required></textarea>
-    <input type="file" id="images" accept="image/*" multiple required>
-    <button type="submit">Upload Listing</button>
-  </form>
+  <div class="container">
+    <h2>🏠 Add Property Listing</h2>
+    <form id="listingForm">
+      <input type="text" id="title" placeholder="Property Title" required>
+      <input type="text" id="location" placeholder="Location" required>
+      <input type="text" id="price" placeholder="Price (e.g. 65,000 KES/month)" required>
+      <textarea id="description" placeholder="Property Description..." rows="4" required></textarea>
+      <input type="file" id="images" accept="image/*" multiple required>
+      <button type="submit">Upload Listing</button>
+    </form>
+    <footer>© 2025 Rageo Rentals | <a href="https://rageoproperties.co.ke" target="_blank">Visit Main Site</a></footer>
+  </div>
+</body>
 
   <!-- ✅ Make sure the script is inside these tags -->
   <script type="module">
@@ -112,4 +114,5 @@
   </script>
 </body>
 </html>
+
 
