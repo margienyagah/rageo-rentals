@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Add New Listing | Rageo Rentals</title>
+
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -27,13 +28,6 @@
       height: 60px;
     }
 
-    header h1 {
-      font-size: 1.8em;
-      color: #333;
-      margin: 0;
-    }
-
-    /* Hero Banner */
     .hero {
       background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('hero1.jpg') center/cover no-repeat;
       color: white;
@@ -41,35 +35,6 @@
       padding: 60px 20px;
     }
 
-    .hero h2 {
-      font-size: 2em;
-      margin-bottom: 10px;
-    }
-
-    /* Buttons */
-    .buttons {
-      text-align: center;
-      margin: 15px 0 30px;
-    }
-
-    .buttons a {
-      display: inline-block;
-      margin: 6px;
-      padding: 10px 18px;
-      border-radius: 5px;
-      text-decoration: none;
-      font-weight: bold;
-      color: white;
-      transition: 0.3s;
-    }
-
-    .btn-site { background: #007bff; }
-    .btn-site:hover { background: #0069d9; }
-
-    .btn-call { background: #ff6600; }
-    .btn-call:hover { background: #e65c00; }
-
-    /* Form */
     form {
       max-width: 500px;
       margin: 0 auto 40px;
@@ -88,37 +53,25 @@
       font-size: 1em;
     }
 
-    textarea {
-      resize: vertical;
+    #preview img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      margin: 5px;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 
     button {
       background: #28a745;
       color: white;
       border: none;
-      cursor: pointer;
       font-weight: bold;
-      transition: background 0.3s;
+      cursor: pointer;
     }
 
     button:hover {
       background: #218838;
-    }
-
-    /* Image Preview Grid */
-    #preview {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    #preview img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 6px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 
     footer {
@@ -127,148 +80,130 @@
       padding: 15px;
       font-size: 0.9em;
     }
-
-    footer a {
-      color: #1877f2;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    footer a:hover {
-      text-decoration: underline;
-    }
   </style>
 </head>
 
 <body>
 
-  <header>
-    <img src="logo.jpg" alt="Rageo Rentals Logo">
-    <h1>Rageo Rentals</h1>
-  </header>
+<header>
+  <img src="logo.jpg" alt="Rageo Rentals Logo">
+  <h1>Rageo Rentals</h1>
+</header>
 
-  <section class="hero">
-    <h2>List Your Property Easily</h2>
-    <p>Upload details and preview your images before posting</p>
-  </section>
+<section class="hero">
+  <h2>List Your Property Easily</h2>
+  <p>Upload details and preview your images before posting</p>
+</section>
 
-  <div class="buttons">
-    <a href="https://rageoproperties.co.ke" target="_blank" class="btn-site">🌐 Visit Main Site</a>
-    <a href="tel:+254726028077" class="btn-call">📞 Call Now</a>
-  </div>
+<form id="listingForm">
+  <input type="text" id="title" placeholder="🏠 Property Title" required>
+  <input type="text" id="location" placeholder="📍 Location" required>
+  <input type="text" id="price" placeholder="💰 Price" required>
 
-  <form id="listingForm">
-    <input type="text" id="title" placeholder="🏠 Property Title" required>
-    <input type="text" id="location" placeholder="📍 Location (e.g. Kilimani, Nairobi)" required>
-    <input type="text" id="price" placeholder="💰 Price (e.g. 65,000 KES/month)" required>
-    <textarea id="description" placeholder="📝 Property Description (no phone numbers please)" rows="4" required></textarea>
-    
-    <input type="file" id="images" accept="image/*" multiple required>
-    <div id="preview"></div>
+  <textarea id="description" placeholder="📝 Property Description (no phone numbers)" rows="4" required></textarea>
 
-    <button type="submit">➕ Upload Listing</button>
-  </form>
+  <input type="file" id="images" accept="image/*" multiple required>
 
-  <footer>
-    <p>© 2025 Rageo Properties. All rights reserved. | 
-      <a href="https://www.facebook.com/profile.php?id=100069511291857" target="_blank">Follow us on Facebook</a>
-    </p>
-  </footer>
+  <div id="preview"></div>
 
-  <!-- Firebase + Cloudinary Script -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  <button type="submit">➕ Upload Listing</button>
+</form>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBOoGvZDvzp-CHLVllJAujTdo84vxcz_hM",
-      authDomain: "rageo-rentals.firebaseapp.com",
-      projectId: "rageo-rentals",
-    };
+<footer>
+  <p>© 2025 Rageo Properties. All rights reserved.</p>
+</footer>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    const cloudName = "dx4akb9b0";
-    const uploadPreset = "rageo_unsigned";
+  const firebaseConfig = {
+    apiKey: "AIzaSyBOoGvZDvzp-CHLVllJAujTdo84vxcz_hM",
+    authDomain: "rageo-rentals.firebaseapp.com",
+    projectId: "rageo-rentals",
+  };
 
-    const form = document.getElementById("listingForm");
-    const imageInput = document.getElementById("images");
-    const previewDiv = document.getElementById("preview");
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-    // 🖼️ Preview selected images
-    imageInput.addEventListener("change", () => {
-      previewDiv.innerHTML = "";
-      const files = imageInput.files;
-      for (let i = 0; i < files.length; i++) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = document.createElement("img");
-          img.src = e.target.result;
-          previewDiv.appendChild(img);
-        };
-        reader.readAsDataURL(files[i]);
-      }
+  const cloudName = "dx4akb9b0";
+  const uploadPreset = "rageo_unsigned";
+
+  const form = document.getElementById("listingForm");
+  const imageInput = document.getElementById("images");
+  const previewDiv = document.getElementById("preview");
+
+  // Image preview
+  imageInput.addEventListener("change", () => {
+    previewDiv.innerHTML = "";
+    [...imageInput.files].forEach(file => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        previewDiv.appendChild(img);
+      };
+      reader.readAsDataURL(file);
     });
+  });
 
-    // 🚫 Restrict phone numbers & upload listing
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+  // Submit Form
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      const title = document.getElementById("title").value.trim();
-      const location = document.getElementById("location").value.trim();
-      const price = document.getElementById("price").value.trim();
-      const description = document.getElementById("description").value.trim();
-      const files = imageInput.files;
+    const title = document.getElementById("title").value.trim();
+    const location = document.getElementById("location").value.trim();
+    const price = document.getElementById("price").value.trim();
+    const description = document.getElementById("description").value.trim();
 
-      const phonePattern = /\+?\d{3,}/g;
-      if (phonePattern.test(description)) {
-        alert("❌ Please do not include phone numbers in the description. Clients will contact us directly.");
-        return;
-      }
+    const phonePattern = /\+?\d{3,}/g;
+    if (phonePattern.test(description)) {
+      alert("❌ Please do not include phone numbers in the description.");
+      return;
+    }
 
-      if (files.length === 0) {
-        alert("Please upload at least one image.");
-        return;
-      }
+    const files = imageInput.files;
+    if (files.length === 0) {
+      alert("Please upload at least one image.");
+      return;
+    }
 
-      const imageUrls = [];
-      for (let i = 0; i < files.length; i++) {
-        const formData = new FormData();
-        formData.append("file", files[i]);
-        formData.append("upload_preset", uploadPreset);
+    const imageUrls = [];
 
-        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-          method: "POST",
-          body: formData
-        });
+    for (let file of files) {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", uploadPreset);
 
-        const data = await res.json();
-        imageUrls.push(data.secure_url);
-      }
-
-      await addDoc(collection(db, "listings"), {
-        title,
-        location,
-        price,
-        description,
-        images: imageUrls,
-        created: new Date()
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: "POST",
+        body: formData
       });
 
-      alert("✅ Listing added successfully! Redirecting you to homepage...");
-      form.reset();
-      previewDiv.innerHTML = "";
+      const data = await res.json();
+      imageUrls.push(data.secure_url);
+    }
 
-      // 🔁 Redirect to homepage after 3 seconds
-      setTimeout(() => {
-        window.location.href = "index.html";
-      }, 3000);
+    await addDoc(collection(db, "listings"), {
+      title,
+      location,
+      price,
+      description,
+      images: imageUrls,
+      created: new Date()
     });
-  </script>
+
+    alert("✅ Listing added successfully! Redirecting...");
+    form.reset();
+    previewDiv.innerHTML = "";
+
+    setTimeout(() => window.location.href = "index.html", 2000);
+  });
+</script>
 
 </body>
 </html>
+
 
 
 
