@@ -147,62 +147,75 @@
     });
   });
 
-  // Submit Form
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  // Prevent multiple submissions
+let isSubmitting = false;
 
-    const title = document.getElementById("title").value.trim();
-    const location = document.getElementById("location").value.trim();
-    const price = document.getElementById("price").value.trim();
-    const description = document.getElementById("description").value.trim();
+// Submit Form
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    const phonePattern = /\+?\d{3,}/g;
-    if (phonePattern.test(description)) {
-      alert("❌ Please do not include phone numbers in the description.");
-      return;
-    }
+  if (isSubmitting) {
+    console.warn("⛔ Duplicate submission blocked");
+    return;
+  }
+  isSubmitting = true; // lock
 
-    const files = imageInput.files;
-    if (files.length === 0) {
-      alert("Please upload at least one image.");
-      return;
-    }
+  const title = document.getElementById("title").value.trim();
+  const location = document.getElementById("location").value.trim();
+  const price = document.getElementById("price").value.trim();
+  const description = document.getElementById("description").value.trim();
 
-    const imageUrls = [];
+  const phonePattern = /\+?\d{3,}/g;
+  if (phonePattern.test(description)) {
+    alert("❌ Please do not include phone numbers.");
+    isSubmitting = false;
+    return;
+  }
 
-    for (let file of files) {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", uploadPreset);
+  const files = imageInput.files;
+  if (files.length === 0) {
+    alert("Please upload at least one image.");
+    isSubmitting = false;
+    return;
+  }
 
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-        method: "POST",
-        body: formData
-      });
+  const imageUrls = [];
 
-      const data = await res.json();
-      imageUrls.push(data.secure_url);
-    }
+  for (let file of files) {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", uploadPreset);
 
-    await addDoc(collection(db, "listings"), {
-      title,
-      location,
-      price,
-      description,
-      images: imageUrls,
-      created: new Date()
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+      method: "POST",
+      body: formData
     });
 
-    alert("✅ Listing added successfully! Redirecting...");
-    form.reset();
-    previewDiv.innerHTML = "";
+    const data = await res.json();
+    imageUrls.push(data.secure_url);
+  }
 
-    setTimeout(() => window.location.href = "index.html", 2000);
+  await addDoc(collection(db, "listings"), {
+    title,
+    location,
+    price,
+    description,
+    images: imageUrls,
+    created: new Date()
   });
+
+  alert("✅ Listing added successfully! Redirecting...");
+  form.reset();
+  previewDiv.innerHTML = "";
+
+  setTimeout(() => window.location.href = "index.html", 2000);
+});
+
 </script>
 
 </body>
 </html>
+
 
 
 
