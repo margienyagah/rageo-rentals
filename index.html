@@ -1,324 +1,286 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rageo Rentals | Verified Houses for Rent in Kenya</title>
-
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Rageo Rentals — Verified Houses for Rent</title>
+  <link rel="canonical" href="https://rageoproperties.com/">
   <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #fafafa;
-      color: #333;
+    :root{
+      --accent:#007bff;
+      --card-bg:#fff;
+      --muted:#666;
+      --max-width:1200px;
     }
-
-    /* --- Header --- */
-    header {
-      background: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 15px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      position: relative;
-      z-index: 2;
-    }
-
-    header img {
-      height: 60px;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 1.8em;
-      color: #333;
-    }
-
-    /* --- HERO SLIDESHOW --- */
-    .hero-slideshow {
-      position: relative;
-      height: 360px;
-      overflow: hidden;
-    }
-
+    html,body{height:100%}
+    body{font-family:Arial,system-ui; margin:0; padding:0; background:#fafafa; color:#222; display:flex; justify-content:center}
+    .container{max-width:var(--max-width); width:100%; padding:18px;}
+    header{display:flex;align-items:center;gap:12px;padding:12px 0}
+    header img{height:56px}
+    /* --- Hero Slideshow styles (integrated) --- */
+    .hero-slideshow-wrapper { margin-bottom:16px; position:relative; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.06); }
+    .hero-slideshow { position:relative; height:360px; overflow:hidden; background:#333; }
     .hero-slideshow .slide {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background-size: cover;
-      background-position: center;
-      opacity: 0;
-      transition: opacity 1.5s ease-in-out;
+      position:absolute;
+      inset:0;
+      background-size:cover;
+      background-position:center;
+      opacity:0;
+      transition:opacity 1.2s ease-in-out;
     }
-
-    .hero-slideshow .slide.active {
-      opacity: 1;
-    }
-
+    .hero-slideshow .slide.active { opacity:1; }
     .hero-text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      color: white;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
-      z-index: 1;
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform:translate(-50%,-50%);
+      color:white;
+      text-align:center;
+      z-index:2;
+      text-shadow:0 2px 8px rgba(0,0,0,0.6);
+      padding: 0 12px;
+    }
+    .hero-text h2{font-size:2rem;margin:0 0 6px}
+    .hero-text p{margin:0;color:#f3f3f3}
+    .hero-nav { position:absolute; left:12px; right:12px; bottom:12px; display:flex; justify-content:center; gap:8px; z-index:3; }
+    .hero-dot { width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.5);cursor:pointer; }
+    .hero-dot.active { background:white; box-shadow:0 1px 4px rgba(0,0,0,0.3); }
+
+    /* --- Controls and search/header --- */
+    .controls{display:flex;justify-content:space-between;align-items:center;margin:12px 0;gap:12px}
+    .search{flex:1}
+
+    /* --- Grid and cards --- */
+    .grid{display:grid;gap:16px;margin-top:12px;}
+    @media (min-width: 0px){ .grid{grid-template-columns: 1fr;} }
+    @media (min-width: 700px){ .grid{grid-template-columns: repeat(2, 1fr);} }
+    @media (min-width: 1024px){ .grid{grid-template-columns: repeat(3, 1fr);} }
+
+    .card{background:var(--card-bg);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);display:flex;flex-direction:column}
+    .card .media{width:100%;height:180px;overflow:hidden;background:#eee;display:flex;align-items:center;justify-content:center}
+    .card .media img{width:100%;height:100%;object-fit:cover;display:block}
+    .card .body{padding:10px;flex:1;display:flex;flex-direction:column}
+    .card h3{margin:0 0 6px;font-size:1.05rem}
+    .meta{color:var(--muted);font-size:0.9rem;margin-bottom:8px}
+    .desc{color:#333;font-size:0.95rem;margin-top:auto}
+    .card .foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+    .btn{background:var(--accent);color:white;padding:8px 12px;border-radius:6px;text-decoration:none;font-weight:700}
+    .price{font-weight:800;color:#111}
+    .desc-short{
+      display:-webkit-box;
+      -webkit-line-clamp:3;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
     }
 
-    .hero-text h2 {
-      font-size: 2.3em;
-      margin-bottom: 8px;
-    }
+    .load-more{display:block;margin:20px auto;padding:10px 18px;border-radius:8px;background:#333;color:#fff;border:none;cursor:pointer}
+    footer{margin:24px 0;color:var(--muted);text-align:center}
 
-    .hero-text p {
-      font-size: 1.1em;
-    }
-
-    /* --- Buttons --- */
-    .buttons {
-      text-align: center;
-      margin: 20px 0;
-    }
-
-    .buttons a {
-      display: inline-block;
-      margin: 6px;
-      padding: 10px 18px;
-      border-radius: 5px;
-      text-decoration: none;
-      font-weight: bold;
-      color: white;
-      transition: 0.3s;
-    }
-
-    .btn-add { background: #28a745; }
-    .btn-add:hover { background: #218838; }
-
-    .btn-site { background: #007bff; }
-    .btn-site:hover { background: #0069d9; }
-
-    .btn-call { background: #ff6600; }
-    .btn-call:hover { background: #e65c00; }
-
-    /* --- Listings --- */
-    main {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .listing {
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      width: 280px;
-      margin: 10px;
-      background: white;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      overflow: hidden;
-      position: relative;
-    }
-
-    .carousel {
-      position: relative;
-      width: 100%;
-      height: 180px;
-      overflow: hidden;
-    }
-
-    .carousel img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      display: none;
-    }
-
-    .carousel img.active {
-      display: block;
-    }
-
-    .carousel button {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0, 0, 0, 0.5);
-      color: white;
-      border: none;
-      font-size: 18px;
-      padding: 4px 8px;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-
-    .carousel .prev { left: 5px; }
-    .carousel .next { right: 5px; }
-
-    .listing .details {
-      padding: 10px;
-    }
-
-    .listing .details h3 {
-      margin: 5px 0;
-    }
-
-    .listing .details p {
-      margin: 3px 0;
-      font-size: 0.9em;
-    }
-
-    /* --- Footer --- */
-    footer {
-      background: #f2f2f2;
-      text-align: center;
-      padding: 15px;
-      margin-top: 20px;
-    }
-
-    footer a {
-      color: #1877f2;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    footer a:hover {
-      text-decoration: underline;
+    /* small responsive tweaks */
+    @media (max-width:420px){
+      .hero-slideshow { height:260px; }
+      .hero-text h2{font-size:1.4rem}
     }
   </style>
 </head>
-
 <body>
+  <div class="container">
+    <header>
+      <img src="/logo.jpg" alt="Rageo Rentals">
+      <div>
+        <div style="font-weight:700">Rageo Rentals</div>
+        <div style="color:var(--muted);font-size:0.9rem">Verified houses for rent in Kenya</div>
+      </div>
+    </header>
 
-  <!-- Header -->
-  <header>
-    <img src="logo.jpg" alt="Rageo Rentals Logo">
-    <h1>Rageo Rentals</h1>
-  </header>
+    <!-- Integrated hero slideshow -->
+    <div class="hero-slideshow-wrapper" aria-hidden="false">
+      <section class="hero-slideshow" id="heroSlideshow" aria-label="Featured images">
+        <div class="slide active" style="background-image:url('hero1.jpg');" role="img" aria-label="Featured property 1"></div>
+        <div class="slide" style="background-image:url('hero2.jpg');" role="img" aria-label="Featured property 2"></div>
+        <div class="slide" style="background-image:url('hero3.jpg');" role="img" aria-label="Featured property 3"></div>
 
-  <!-- Hero Slideshow -->
-  <section class="hero-slideshow">
-    <div class="slide active" style="background-image:url('hero1.jpg');"></div>
-    <div class="slide" style="background-image:url('hero2.jpg');"></div>
-    <div class="slide" style="background-image:url('hero3.jpg');"></div>
+        <div class="hero-text" role="presentation">
+          <h2>Find Your Dream Home</h2>
+          <p>Verified Rentals Across Kenya</p>
+        </div>
 
-    <div class="hero-text">
-      <h2>Find Your Dream Home</h2>
-      <p>Verified Rentals Across Kenya</p>
+        <div class="hero-nav" id="heroNav" aria-hidden="false">
+          <div class="hero-dot active" data-index="0" aria-label="Slide 1"></div>
+          <div class="hero-dot" data-index="1" aria-label="Slide 2"></div>
+          <div class="hero-dot" data-index="2" aria-label="Slide 3"></div>
+        </div>
+      </section>
     </div>
-  </section>
 
-  <!-- Buttons -->
-  <div class="buttons">
-    <a href="add-listing.html" class="btn-add">➕ Add Listing</a>
-    <a href="https://rageoproperties.co.ke" target="_blank" class="btn-site">🌐 Visit Main Site</a>
-    <a href="tel:+254726028077" class="btn-call">📞 Call Now</a>
+    <div class="controls">
+      <div class="search">
+        <input id="searchInput" placeholder="Search by location or title" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ddd">
+      </div>
+      <div style="margin-left:12px">
+        <a class="btn" href="/add-listing.html">➕ Add Listing</a>
+      </div>
+    </div>
+
+    <div id="listingsGrid" class="grid">
+      <!-- cards get injected here -->
+    </div>
+
+    <button id="loadMoreBtn" class="load-more" style="display:none">Load more</button>
+
+    <footer>© 2025 Rageo Properties</footer>
   </div>
 
-  <!-- Listings Section -->
-  <main>
-    <div id="listings">Loading listings...</div>
-  </main>
-
-  <!-- Footer -->
-  <footer>
-    <p>© 2025 Rageo Properties. All rights reserved.</p>
-    <p>
-      <a href="https://www.facebook.com/profile.php?id=100069511291857" target="_blank">
-        👍 Follow us on Facebook
-      </a>
-    </p>
-  </footer>
-
-  <!-- JS for Hero Slideshow -->
   <script>
-    let slideIndex = 0;
-    const slides = document.querySelectorAll('.slide');
-    setInterval(() => {
-      slides[slideIndex].classList.remove('active');
-      slideIndex = (slideIndex + 1) % slides.length;
-      slides[slideIndex].classList.add('active');
-    }, 5000);
+    // Hero slideshow simple logic
+    (function(){
+      const slideshow = document.getElementById('heroSlideshow');
+      const slides = slideshow.querySelectorAll('.slide');
+      const dots = document.getElementById('heroNav').querySelectorAll('.hero-dot');
+      let index = 0;
+      let timer = null;
+
+      function show(n){
+        slides.forEach((s,i)=> s.classList.toggle('active', i===n));
+        dots.forEach((d,i)=> d.classList.toggle('active', i===n));
+        index = n;
+      }
+
+      function next(){
+        show((index+1) % slides.length);
+      }
+
+      // auto rotate
+      timer = setInterval(next, 5000);
+
+      // click dots
+      dots.forEach(d => d.addEventListener('click', () => {
+        clearInterval(timer);
+        show(parseInt(d.dataset.index));
+        timer = setInterval(next, 5000);
+      }));
+    })();
   </script>
 
-  <!-- Firebase App Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import {
+      getFirestore, collection, query, orderBy, limit, getDocs, startAfter
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBOoGvZDvzp-CHLVllJAujTdo84vxcz_hM",
       authDomain: "rageo-rentals.firebaseapp.com",
-      projectId: "rageo-rentals",
+      projectId: "rageo-rentals"
     };
-
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const listingsDiv = document.getElementById("listings");
 
-    async function loadListings() {
-      listingsDiv.innerHTML = "<p>Loading listings...</p>";
-      const q = query(collection(db, "listings"), orderBy("created", "desc"));
-      const snapshot = await getDocs(q);
-
-      if (snapshot.empty) {
-        listingsDiv.innerHTML = "<p>No properties available yet. Check back soon!</p>";
-        return;
-      }
-
-      listingsDiv.innerHTML = "";
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        const listing = document.createElement("div");
-        listing.classList.add("listing");
-
-        let imagesHTML = "";
-        if (Array.isArray(data.images)) {
-          imagesHTML = data.images.map((img, i) => `<img src="${img}" class="${i === 0 ? 'active' : ''}" alt="${data.title}">`).join("");
-        } else if (data.image) {
-          imagesHTML = `<img src="${data.image}" class="active" alt="${data.title}">`;
-        }
-
-        listing.innerHTML = `
-          <div class="carousel">
-            ${imagesHTML}
-            <button class="prev">❮</button>
-            <button class="next">❯</button>
-          </div>
-          <div class="details">
-            <h3>${data.title}</h3>
-            <p><strong>Location:</strong> ${data.location}</p>
-            <p><strong>Price:</strong> ${data.price}</p>
-            <p>${data.description || ""}</p>
-          </div>
-        `;
-        listingsDiv.appendChild(listing);
-
-        const images = listing.querySelectorAll(".carousel img");
-        let index = 0;
-        const showImage = (n) => {
-          images.forEach((img, i) => img.classList.toggle("active", i === n));
-        };
-
-        listing.querySelector(".next").addEventListener("click", () => {
-          index = (index + 1) % images.length;
-          showImage(index);
-        });
-        listing.querySelector(".prev").addEventListener("click", () => {
-          index = (index - 1 + images.length) % images.length;
-          showImage(index);
-        });
-      });
+    // Cloudinary helper
+    function cloudThumb(url, w=800, h=600){
+      if(!url) return url;
+      return url.replace('/upload/','/upload/w_' + w + ',h_' + h + ',c_fill/');
     }
 
-    loadListings();
+    // UI elements
+    const listingsGrid = document.getElementById('listingsGrid');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    const searchInput = document.getElementById('searchInput');
+
+    const PAGE_SIZE = 9;
+    let lastDoc = null;
+    let loading = false;
+
+    function truncate(text, max = 140){
+      if(!text) return '';
+      if (text.length <= max) return text;
+      const truncated = text.slice(0, max);
+      return truncated.replace(/\s+\S*$/, '') + '…';
+    }
+
+    function escapeHtml(s){
+      if(!s) return '';
+      return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+    }
+
+    function createCard(doc){
+      const data = doc.data();
+      const id = doc.id;
+      const images = Array.isArray(data.images) ? data.images : (data.image ? [data.image] : []);
+      const thumb = images[0] ? cloudThumb(images[0], 800, 600) : '/placeholder.jpg';
+
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="media"><img src="${thumb}" alt="${escapeHtml(data.title||'Property')}" loading="lazy"></div>
+        <div class="body">
+          <h3>${escapeHtml(data.title || 'Untitled')}</h3>
+          <div class="meta">${escapeHtml(data.location || '')}</div>
+          <div class="desc desc-short">${escapeHtml(truncate(data.description || '', 140))}</div>
+          <div class="foot">
+            <div class="price">${escapeHtml(data.price || '')}</div>
+            <a class="btn" href="/property.html?id=${id}" aria-label="View ${escapeHtml(data.title||'property')}">View</a>
+          </div>
+        </div>
+      `;
+      return card;
+    }
+
+    async function loadPage(isFirst = true){
+      if(loading) return;
+      loading = true;
+      try {
+        let q;
+        if(isFirst){
+          q = query(collection(db, 'listings'), orderBy('created','desc'), limit(PAGE_SIZE));
+        } else {
+          q = query(collection(db, 'listings'), orderBy('created','desc'), startAfter(lastDoc), limit(PAGE_SIZE));
+        }
+        const snap = await getDocs(q);
+        if (snap.empty && isFirst) {
+          listingsGrid.innerHTML = '<p style="grid-column:1/-1;color:var(--muted)">No properties available yet. Check back soon.</p>';
+          loadMoreBtn.style.display = 'none';
+          return;
+        }
+        if (!snap.empty) {
+          lastDoc = snap.docs[snap.docs.length - 1];
+          snap.forEach(doc => {
+            const card = createCard(doc);
+            listingsGrid.appendChild(card);
+          });
+        }
+
+        if (snap.size === PAGE_SIZE) {
+          loadMoreBtn.style.display = 'block';
+        } else {
+          loadMoreBtn.style.display = 'none';
+        }
+      } catch (err) {
+        console.error('Load listings error', err);
+        listingsGrid.innerHTML = '<p style="color:red">Failed to load listings. See console.</p>';
+        loadMoreBtn.style.display = 'none';
+      } finally {
+        loading = false;
+      }
+    }
+
+    // initial load
+    loadPage(true);
+
+    loadMoreBtn.addEventListener('click', () => loadPage(false));
+
+    // client-side simple search filtering
+    searchInput.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      const cards = listingsGrid.querySelectorAll('.card');
+      cards.forEach(c => {
+        const text = (c.querySelector('h3').textContent + ' ' + c.querySelector('.meta').textContent).toLowerCase();
+        c.style.display = text.includes(q) ? '' : 'none';
+      });
+    });
   </script>
 </body>
 </html>
-
-
 
 
 
