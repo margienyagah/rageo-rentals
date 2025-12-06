@@ -18,13 +18,22 @@
       background: white;
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 15px;
+      justify-content: space-between;
+      padding: 15px 25px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
-    header img { height: 60px; }
+    header img { height: 55px; }
+
+    .user-info { font-size: 0.9em; color: #555; }
+    .logout-btn {
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
 
     .hero {
       background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('hero1.jpg') center/cover no-repeat;
@@ -78,9 +87,6 @@
       border: 1px solid #d4f0d4;
     }
 
-    .share-box input { width: calc(100% - 110px); display:inline-block; }
-    .share-box button { display:inline-block; width:90px; margin-left:8px; }
-
     footer {
       text-align: center;
       background: #f2f2f2;
@@ -91,8 +97,11 @@
 </head>
 <body>
   <header>
-    <img src="logo.jpg" alt="Rageo Rentals Logo">
-    <h1>Rageo Rentals</h1>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="logo.jpg" alt="Rageo Rentals Logo">
+      <h1 style="font-size:1.4em;margin:0;">Rageo Rentals</h1>
+    </div>
+    <div class="user-info" id="userInfo"></div>
   </header>
 
   <section class="hero">
@@ -104,14 +113,10 @@
     <input type="text" id="title" placeholder="🏠 Property Title" required>
     <input type="text" id="location" placeholder="📍 Location (e.g. Kilimani, Nairobi)" required>
     <input type="text" id="price" placeholder="💰 Price (e.g. 65,000 KES/month)" required>
-
     <textarea id="description" placeholder="📝 Property Description (no phone numbers)" rows="4" required></textarea>
-
     <label style="margin-top:10px; font-weight:bold;">Upload images (you can select multiple)</label>
     <input type="file" id="images" accept="image/*" multiple required>
-
     <div id="preview" aria-live="polite"></div>
-
     <button type="submit">➕ Upload Listing</button>
 
     <div id="shareBox" class="share-box" aria-hidden="true">
@@ -131,8 +136,10 @@
     import {
       getFirestore, collection, addDoc, doc, updateDoc
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import {
+      getAuth, onAuthStateChanged, signOut
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-    // ---------- Firebase config ----------
     const firebaseConfig = {
       apiKey: "AIzaSyBOoGvZDvzp-CHLVllJAujTdo84vxcz_hM",
       authDomain: "rageo-rentals.firebaseapp.com",
@@ -141,12 +148,9 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
 
-    // ---------- Cloudinary config ----------
-    const cloudName = "dx4akb9b0";
-    const uploadPreset = "rageo_unsigned";
-
-    // ---------- Page elements ----------
+    const userInfo = document.getElementById("userInfo");
     const form = document.getElementById("listingForm");
     const imageInput = document.getElementById("images");
     const previewDiv = document.getElementById("preview");
@@ -155,25 +159,29 @@
     const copyBtn = document.getElementById("copyBtn");
     const openBtn = document.getElementById("openBtn");
 
-    // ---------- Helpers ----------
-    const sleep = ms => new Promise(res => setTimeout(res, ms));
+    const cloudName = "dx4akb9b0";
+    const uploadPreset = "rageo_unsigned";
 
-    function slugify(text) {
-      return text.toString().toLowerCase()
-        .replace(/\s+/g, '-')           // Replace spaces with -
-        .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
-        .replace(/\-\-+/g, '-')         // Replace multiple - with single -
-        .replace(/^-+/, '')             // Trim - from start
-        .replace(/-+$/, '');            // Trim - from end
-    }
+    // Redirect unauthenticated users
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        window.location.href = "login.html";
+      } else {
+        userInfo.innerHTML = `
+          Signed in as <strong>${user.email}</strong> 
+          <button class="logout-btn" id="logoutBtn">Logout</button>`;
+        document.getElementById("logoutBtn").onclick = () => {
+          signOut(auth).then(() => window.location.href = "login.html");
+        };
+      }
+    });
 
-    // ---------- Image preview ----------
+    // Preview
     imageInput.addEventListener("change", () => {
       previewDiv.innerHTML = "";
-      const files = [...imageInput.files];
-      files.forEach(file => {
+      [...imageInput.files].forEach(file => {
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = e => {
           const img = document.createElement("img");
           img.src = e.target.result;
           previewDiv.appendChild(img);
@@ -182,32 +190,34 @@
       });
     });
 
-    // ---------- Submission lock ----------
+    // Submission
     let isSubmitting = false;
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-    form.addEventListener("submit", async (e) => {
+    form.addEventListener("submit", async e => {
       e.preventDefault();
-      if (isSubmitting) {
-        console.warn('Duplicate submission blocked');
-        return;
-      }
+      if (isSubmitting) return;
       isSubmitting = true;
 
-      // read values
+      const user = auth.currentUser;
+      if (!user) {
+        alert("Please log in first.");
+        window.location.href = "login.html";
+        return;
+      }
+
       const title = document.getElementById("title").value.trim();
       const location = document.getElementById("location").value.trim();
       const price = document.getElementById("price").value.trim();
       const description = document.getElementById("description").value.trim();
       const files = [...imageInput.files];
 
-      // basic validation
       if (!title || !location || !price || files.length === 0) {
-        alert("Please complete all required fields and upload at least one image.");
+        alert("Complete all required fields and upload images.");
         isSubmitting = false;
         return;
       }
 
-      // prevent phone numbers in description
       const phonePattern = /\+?\d{3,}/g;
       if (phonePattern.test(description)) {
         alert("❌ Please do not include phone numbers in the description.");
@@ -216,90 +226,38 @@
       }
 
       try {
-        // show temporary message
         const submitBtn = form.querySelector('button[type="submit"]');
         const prevText = submitBtn.textContent;
         submitBtn.textContent = "Uploading images...";
 
-        // upload images sequentially (keeps memory usage low)
         const imageUrls = [];
-        for (let i = 0; i < files.length; i++) {
-          const f = files[i];
+        for (const f of files) {
           const fd = new FormData();
           fd.append("file", f);
           fd.append("upload_preset", uploadPreset);
-
-          const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-            method: "POST",
-            body: fd
-          });
-
-          if (!res.ok) {
-            const text = await res.text();
-            throw new Error("Cloudinary upload failed: " + text);
-          }
-
+          const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method:"POST", body:fd });
           const data = await res.json();
-          if (data.secure_url) imageUrls.push(data.secure_url);
-          // small delay to avoid hitting upload limits on slow connections
-          await sleep(150);
+          imageUrls.push(data.secure_url);
+          await sleep(120);
         }
 
         submitBtn.textContent = "Saving listing...";
-
-        // save to Firestore
         const docRef = await addDoc(collection(db, "listings"), {
-          title,
-          location,
-          price,
-          description,
-          images: imageUrls,
-          created: new Date()
+          title, location, price, description,
+          images: imageUrls, created: new Date(), user: user.email
         });
 
-        // create and store slug (optional, useful later)
-        const slug = slugify(title).slice(0, 80);
-        try {
-          await updateDoc(doc(db, "listings", docRef.id), { slug });
-        } catch (err) {
-          // non-fatal if update fails
-          console.warn("Could not update slug:", err);
-        }
-
-        // Build share URL (client-side quick option)
         const shareUrl = `${window.location.origin}/property.html?id=${docRef.id}`;
         shareLinkInput.value = shareUrl;
         shareBox.style.display = "block";
-        shareBox.setAttribute("aria-hidden", "false");
-
-        // copy button
-        copyBtn.onclick = () => {
-          shareLinkInput.select();
-          try {
-            document.execCommand('copy');
-            copyBtn.textContent = "Copied!";
-            setTimeout(() => copyBtn.textContent = "Copy", 2000);
-          } catch {
-            alert("Copy failed — please manually select and copy the link.");
-          }
-        };
-
-        // open button
-        openBtn.onclick = () => window.open(shareUrl, "_blank");
-
-        alert("✅ Listing added successfully! Share the link or you'll be redirected shortly.");
-        form.reset();
-        previewDiv.innerHTML = "";
-
-        // reset button text
+        alert("✅ Listing added successfully!");
+        form.reset(); previewDiv.innerHTML = "";
         submitBtn.textContent = prevText;
-
-        // optional: redirect to homepage after 6 seconds
         setTimeout(() => window.location.href = "index.html", 6000);
 
       } catch (err) {
-        console.error("Error uploading/saving listing:", err);
-        alert("There was an error adding the listing. See console for details.");
+        console.error(err);
+        alert("Error adding listing. Try again.");
       } finally {
         isSubmitting = false;
       }
@@ -307,6 +265,7 @@
   </script>
 </body>
 </html>
+
 
 
 
