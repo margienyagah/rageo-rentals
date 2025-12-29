@@ -1,4 +1,5 @@
 <!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -6,32 +7,150 @@
   <title>Property | Rageo Rentals</title>
   <meta name="description" content="Loading property..." />
   <link rel="canonical" href="https://rageoproperties.com/">
+
   <style>
-    :root{--accent:#007bff;--muted:#666}
-    body{font-family:Arial,system-ui,-apple-system;max-width:1000px;margin:18px auto;padding:12px;color:#222}
-    header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
-    header img{height:56px}
-    h1{margin:6px 0;font-size:1.4rem}
-    .meta{color:var(--muted);margin-bottom:10px}
-    .grid{display:grid;grid-template-columns:1fr 320px;gap:18px;align-items:start}
-    .gallery{background:#fff;padding:8px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
-    .gallery .main img{width:100%;height:520px;object-fit:cover;border-radius:6px}
-    .thumbs{display:flex;gap:8px;margin-top:8px;overflow-x:auto}
-    .thumbs img{width:84px;height:64px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid transparent}
-    .thumbs img.active{border-color:var(--accent)}
-    .info{background:#fff;padding:14px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
-    .price{font-size:1.25rem;font-weight:700;margin:6px 0;color:#111}
-    .location{color:var(--muted)}
-    .desc{margin-top:12px;line-height:1.5;background:#fff;padding:12px;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
-    .actions{display:flex;gap:8px;margin-top:12px}
-    .btn{display:inline-block;padding:10px 14px;border-radius:6px;color:white;text-decoration:none;font-weight:700;border:none;cursor:pointer}
-    .btn-call{background:#28a745}
-    .btn-copy{background:var(--accent)}
-    .small{font-size:0.9rem;color:var(--muted)}
-    footer{margin-top:22px;color:var(--muted);text-align:center}
+    :root {
+      --accent:#007bff;
+      --muted:#666;
+      --bg:#fafafa;
+    }
+    body {
+      font-family: Arial, system-ui, -apple-system;
+      max-width: 1000px;
+      margin: 18px auto;
+      padding: 12px;
+      color: #222;
+      background: var(--bg);
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    header img { height: 56px; }
+
+    h1 { margin: 6px 0; font-size: 1.4rem; }
+    .meta { color: var(--muted); margin-bottom: 10px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    /* ---- Gallery ---- */
+    .gallery {
+      background: #fff;
+      padding: 8px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      position: relative;
+    }
+    .gallery .main img {
+      width: 100%;
+      max-height: 520px;
+      object-fit: contain;
+      background: #000;
+      border-radius: 6px;
+      cursor: zoom-in;
+      transition: transform 0.3s ease;
+    }
+
+    /* Thumbnails */
+    .thumbs {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      overflow-x: auto;
+    }
+    .thumbs img {
+      width: 84px;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.2s;
+    }
+    .thumbs img.active { border-color: var(--accent); }
+
+    /* ---- Info & description ---- */
+    .info {
+      background: #fff;
+      padding: 14px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .price {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 6px 0;
+      color: #111;
+    }
+    .location { color: var(--muted); }
+
+    .desc {
+      margin-top: 12px;
+      line-height: 1.5;
+      background: #fff;
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+
+    /* ---- Buttons ---- */
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px 14px;
+      border-radius: 6px;
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-call { background: #28a745; }
+    .btn-copy { background: var(--accent); }
+    .small { font-size: 0.9rem; color: var(--muted); }
+
+    /* ---- Lightbox (fullscreen image) ---- */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.9);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .lightbox img {
+      max-width: 95%;
+      max-height: 90%;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+    .lightbox.active {
+      display: flex;
+    }
+
+    footer {
+      margin-top: 22px;
+      color: var(--muted);
+      text-align: center;
+    }
+
     @media (max-width:880px){
-      .grid{grid-template-columns:1fr; }
-      .gallery .main img{height:320px}
+      .grid { grid-template-columns: 1fr; }
+      .gallery .main img { max-height: 340px; }
     }
   </style>
 </head>
@@ -50,6 +169,11 @@
     </div>
   </main>
 
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <img id="lightboxImg" src="" alt="Property image">
+  </div>
+
   <footer>
     <p class="small">© 2025 Rageo Properties</p>
   </footer>
@@ -58,7 +182,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    // ---------- Firebase config (same as site) ----------
     const firebaseConfig = {
       apiKey: "AIzaSyBOoGvZDvzp-CHLVllJAujTdo84vxcz_hM",
       authDomain: "rageo-rentals.firebaseapp.com",
@@ -67,17 +190,8 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // ---------- Helpers ----------
-    function getParam(name) {
-      const u = new URL(window.location.href);
-      return u.searchParams.get(name);
-    }
-
-    function createEl(tag, props = {}, children = []) {
-      const el = document.createElement(tag);
-      Object.entries(props).forEach(([k,v]) => { if (k === 'class') el.className = v; else if (k === 'html') el.innerHTML = v; else el.setAttribute(k, v); });
-      (Array.isArray(children) ? children : [children]).forEach(c => { if (typeof c === 'string') el.appendChild(document.createTextNode(c)); else if (c) el.appendChild(c); });
-      return el;
+    function getParam(name){
+      return new URL(location.href).searchParams.get(name);
     }
 
     function cloudinaryThumb(url, w=1200, h=800){
@@ -85,148 +199,119 @@
       return url.replace('/upload/', `/upload/w_${w},h_${h},c_fill/`);
     }
 
-    // ---------- Render property ----------
     async function renderProperty(id){
       const container = document.getElementById('content');
-      const loading = document.getElementById('loading'); if (loading) loading.remove();
+      const loading = document.getElementById('loading');
+      if (loading) loading.remove();
 
-      // fetch doc
-      try {
-        const ref = doc(db, 'listings', id);
-        const snap = await getDoc(ref);
-        if (!snap.exists()) {
-          container.appendChild(createEl('p',{class:'small'},'Property not found.'));
-          return;
-        }
-        const data = snap.data();
-
-        // page title & meta & canonical
-        const titleText = (data.title || 'Property') + (data.location ? ' — ' + data.location : '');
-        document.title = titleText + ' | Rageo Rentals';
-        const metaDesc = document.querySelector('meta[name="description"]');
-        if (metaDesc) metaDesc.setAttribute('content', (data.description || '').slice(0,160));
-        // add canonical
-        const canonical = document.querySelector('link[rel="canonical"]') || document.createElement('link');
-        canonical.setAttribute('rel','canonical');
-        canonical.setAttribute('href', `${window.location.origin}${window.location.pathname}?id=${id}`);
-        document.head.appendChild(canonical);
-
-        // images array fallback
-        const images = Array.isArray(data.images) && data.images.length ? data.images : (data.image ? [data.image] : []);
-
-        // build DOM
-        const grid = createEl('div',{class:'grid'});
-
-        // left: gallery + description
-        const left = createEl('div', {});
-        const galleryBox = createEl('div', {class:'gallery'});
-        const mainWrap = createEl('div', {class:'main'});
-        const mainImg = createEl('img', {src: images[0] ? cloudinaryThumb(images[0],1200,800) : '/placeholder.jpg', alt: data.title || 'Property image', loading:'lazy'});
-        mainWrap.appendChild(mainImg);
-        galleryBox.appendChild(mainWrap);
-
-        if (images.length > 1) {
-          const thumbs = createEl('div',{class:'thumbs'});
-          images.forEach((src, i) => {
-            const thumb = createEl('img',{src: cloudinaryThumb(src,300,200), loading:'lazy'});
-            if (i === 0) thumb.classList.add('active');
-            thumb.addEventListener('click', () => {
-              mainImg.src = cloudinaryThumb(src,1200,800);
-              thumbs.querySelectorAll('img').forEach(t=>t.classList.remove('active'));
-              thumb.classList.add('active');
-            });
-            thumbs.appendChild(thumb);
-          });
-          galleryBox.appendChild(thumbs);
-        }
-
-        left.appendChild(galleryBox);
-
-        const descBox = createEl('div',{class:'desc'});
-        descBox.appendChild(createEl('h2',{}, data.title || 'Untitled property'));
-        descBox.appendChild(createEl('p',{class:'small'}, (data.location || '')));
-        descBox.appendChild(createEl('p',{}, data.description || ''));
-        left.appendChild(descBox);
-
-        // right: info & actions
-        const right = createEl('aside',{class:'info'});
-        right.appendChild(createEl('div',{class:'location'}, data.location || ''));
-        right.appendChild(createEl('div',{class:'price'}, data.price || 'Contact for price'));
-
-        // agent name (if provided) but DO NOT show agent phone
-        if (data.agentName) {
-          right.appendChild(createEl('div',{class:'small'}, 'Agent: ' + data.agentName));
-        }
-
-        // actions
-        const actions = createEl('div',{class:'actions'});
-        const callBtn = createEl('a',{href:'tel:+254726028077', class:'btn btn-call'}, 'Call Office');
-        const copyBtn = createEl('button',{class:'btn btn-copy', type:'button'}, 'Copy link');
-        actions.appendChild(callBtn);
-        actions.appendChild(copyBtn);
-        right.appendChild(actions);
-
-        // share link input (hidden but used for copying)
-        const shareInput = createEl('input',{type:'text', value: `${window.location.origin}${window.location.pathname}?id=${id}`, readonly:true, style:'margin-top:10px;padding:8px;width:100%;display:none'});
-        right.appendChild(shareInput);
-
-        copyBtn.addEventListener('click', () => {
-          try {
-            shareInput.style.display = 'block';
-            shareInput.select();
-            document.execCommand('copy');
-            copyBtn.textContent = 'Copied!';
-            setTimeout(()=>{ copyBtn.textContent = 'Copy link'; shareInput.style.display='none'; }, 2000);
-          } catch {
-            alert('Copy failed — please select and copy the URL manually: ' + shareInput.value);
-          }
-        });
-
-        // append sections to grid
-        grid.appendChild(left);
-        grid.appendChild(right);
-        container.appendChild(grid);
-
-        // structured data JSON-LD injection
-        const ld = {
-          "@context":"https://schema.org",
-          "@type":"Residence",
-          "name": data.title || '',
-          "description": (data.description || '').slice(0,300),
-          "image": images,
-          "address": {
-            "@type":"PostalAddress",
-            "addressLocality": data.location || '',
-            "addressCountry": "KE"
-          },
-          "offers": {
-            "@type":"Offer",
-            "price": (data.price || '').toString().replace(/[^\d]/g,'') || '',
-            "priceCurrency": "KES",
-            "availability":"https://schema.org/Available"
-          }
-        };
-        const ldScript = document.createElement('script');
-        ldScript.type = 'application/ld+json';
-        ldScript.text = JSON.stringify(ld);
-        document.head.appendChild(ldScript);
-
-      } catch (err) {
-        console.error(err);
-        const container = document.getElementById('content');
-        container.appendChild(createEl('p',{class:'small'}, 'Failed to load property. Try again later.'));
-      }
-    }
-
-    // entrypoint
-    (function(){
-      const id = getParam('id');
-      if (!id) {
-        document.getElementById('content').innerHTML = '<p class="small">No property specified. Go back to <a href="/">listings</a>.</p>';
+      const ref = doc(db, 'listings', id);
+      const snap = await getDoc(ref);
+      if (!snap.exists()){
+        container.innerHTML = '<p>Property not found.</p>';
         return;
       }
-      renderProperty(id);
-    })();
+      const data = snap.data();
+      document.title = (data.title || 'Property') + ' | Rageo Rentals';
+
+      const images = Array.isArray(data.images) && data.images.length ? data.images : [];
+
+      const grid = document.createElement('div');
+      grid.className = 'grid';
+
+      // ---- Left side ----
+      const left = document.createElement('div');
+      const galleryBox = document.createElement('div');
+      galleryBox.className = 'gallery';
+
+      const mainWrap = document.createElement('div');
+      mainWrap.className = 'main';
+      const mainImg = document.createElement('img');
+      mainImg.src = cloudinaryThumb(images[0],1200,800);
+      mainWrap.appendChild(mainImg);
+      galleryBox.appendChild(mainWrap);
+
+      // thumbs
+      if (images.length > 1){
+        const thumbs = document.createElement('div');
+        thumbs.className = 'thumbs';
+        images.forEach((src,i)=>{
+          const t = document.createElement('img');
+          t.src = cloudinaryThumb(src,300,200);
+          if(i===0) t.classList.add('active');
+          t.onclick=()=>{
+            mainImg.src = cloudinaryThumb(src,1200,800);
+            thumbs.querySelectorAll('img').forEach(x=>x.classList.remove('active'));
+            t.classList.add('active');
+          };
+          thumbs.appendChild(t);
+        });
+        galleryBox.appendChild(thumbs);
+      }
+
+      left.appendChild(galleryBox);
+
+      const descBox = document.createElement('div');
+      descBox.className = 'desc';
+      descBox.innerHTML = `
+        <h2>${data.title || ''}</h2>
+        <p class="small">${data.location || ''}</p>
+        <p>${data.description || ''}</p>
+      `;
+      left.appendChild(descBox);
+
+      // ---- Right side ----
+      const right = document.createElement('aside');
+      right.className = 'info';
+      right.innerHTML = `
+        <div class="location">${data.location || ''}</div>
+        <div class="price">${data.price || 'Contact for price'}</div>
+      `;
+      const actions = document.createElement('div');
+      actions.className = 'actions';
+      const callBtn = document.createElement('a');
+      callBtn.href='tel:+254726028077';
+      callBtn.className='btn btn-call';
+      callBtn.textContent='Call Office';
+      const copyBtn = document.createElement('button');
+      copyBtn.className='btn btn-copy';
+      copyBtn.textContent='Copy link';
+      actions.appendChild(callBtn);
+      actions.appendChild(copyBtn);
+      right.appendChild(actions);
+
+      const shareInput = document.createElement('input');
+      shareInput.type='text';
+      shareInput.value=`${location.origin}${location.pathname}?id=${id}`;
+      shareInput.readOnly=true;
+      shareInput.style='display:none;width:100%;margin-top:8px;padding:6px;';
+      right.appendChild(shareInput);
+
+      copyBtn.onclick=()=>{
+        shareInput.style.display='block';
+        shareInput.select();
+        document.execCommand('copy');
+        copyBtn.textContent='Copied!';
+        setTimeout(()=>{copyBtn.textContent='Copy link'; shareInput.style.display='none';},2000);
+      };
+
+      grid.appendChild(left);
+      grid.appendChild(right);
+      container.appendChild(grid);
+
+      // ---- Lightbox click ----
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightboxImg');
+      mainImg.addEventListener('click', ()=>{
+        lightboxImg.src = mainImg.src;
+        lightbox.classList.add('active');
+      });
+      lightbox.addEventListener('click', ()=> lightbox.classList.remove('active'));
+    }
+
+    const id = getParam('id');
+    if (id) renderProperty(id);
+    else document.getElementById('content').innerHTML = '<p>No property specified.</p>';
   </script>
 </body>
 </html>
+
