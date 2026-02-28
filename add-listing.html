@@ -247,7 +247,7 @@ function renderPreview() {
       const location = document.getElementById("location").value.trim();
       const price = document.getElementById("price").value.trim();
       const description = document.getElementById("description").value.trim();
-      const files = [...imageInput.files];
+      const files = selectedFiles;
 
       if (!title || !location || !price || files.length === 0) {
         alert("Complete all required fields and upload images.");
@@ -277,11 +277,7 @@ function renderPreview() {
           imageUrls.push(data.secure_url);
           await sleep(120);
         }
-// Move selected cover image to first position
-if (selectedCoverIndex !== 0) {
-  const cover = imageUrls.splice(selectedCoverIndex, 1)[0];
-  imageUrls.unshift(cover);
-}
+
         submitBtn.textContent = "Saving listing...";
         const docRef = await addDoc(collection(db, "listings"), {
           title, location, price, description,
@@ -306,6 +302,7 @@ if (selectedCoverIndex !== 0) {
   </script>
 </body>
 </html>
+
 
 
 
