@@ -176,40 +176,48 @@
       }
     });
 
-   /// Track selected cover image index
-let selectedCoverIndex = 0;
+ let selectedFiles = [];
 
-// Preview + Select Cover
 imageInput.addEventListener("change", () => {
   previewDiv.innerHTML = "";
-  selectedCoverIndex = 0;
+  selectedFiles = [...imageInput.files];
 
-  const files = [...imageInput.files];
+  renderPreview();
+});
 
-  files.forEach((file, index) => {
+function renderPreview() {
+  previewDiv.innerHTML = "";
+
+  selectedFiles.forEach((file, index) => {
     const reader = new FileReader();
 
     reader.onload = (e) => {
       const img = document.createElement("img");
       img.src = e.target.result;
-      img.style.cursor = "pointer";
+      img.draggable = true;
+      img.dataset.index = index;
+      img.style.cursor = "grab";
 
-      // Highlight first image by default
-      if (index === 0) {
-        img.style.border = "3px solid #007bff";
-      }
+      // Drag start
+      img.addEventListener("dragstart", (ev) => {
+        ev.dataTransfer.setData("text/plain", index);
+      });
 
-      // Click to select cover image
-      img.addEventListener("click", () => {
-        selectedCoverIndex = index;
+      // Drag over
+      img.addEventListener("dragover", (ev) => {
+        ev.preventDefault();
+      });
 
-        // Remove border from all images
-        previewDiv.querySelectorAll("img").forEach(i => {
-          i.style.border = "none";
-        });
+      // Drop
+      img.addEventListener("drop", (ev) => {
+        ev.preventDefault();
+        const fromIndex = parseInt(ev.dataTransfer.getData("text/plain"));
+        const toIndex = parseInt(img.dataset.index);
 
-        // Add border to selected image
-        img.style.border = "3px solid #007bff";
+        const moved = selectedFiles.splice(fromIndex, 1)[0];
+        selectedFiles.splice(toIndex, 0, moved);
+
+        renderPreview();
       });
 
       previewDiv.appendChild(img);
@@ -298,6 +306,7 @@ if (selectedCoverIndex !== 0) {
   </script>
 </body>
 </html>
+
 
 
 
