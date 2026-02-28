@@ -176,17 +176,32 @@
       }
     });
 
-    // Preview
-    imageInput.addEventListener("change", () => {
-      previewDiv.innerHTML = "";
-      [...imageInput.files].forEach(file => {
-        const reader = new FileReader();
-        reader.onload = e => {
-          const img = document.createElement("img");
-          img.src = e.target.result;
-          previewDiv.appendChild(img);
-        };
-        reader.readAsDataURL(file);
+   // Track selected cover image index
+let selectedCoverIndex = 0;
+
+// Preview + Select Cover
+imageInput.addEventListener("change", () => {
+  previewDiv.innerHTML = "";
+  selectedCoverIndex = 0; // default first image is cover
+
+  [...imageInput.files].forEach((file, index) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.createElement("img");
+      img.src = e.target.result;
+      img.style.cursor = "pointer";
+
+      // Highlight first image by default
+      if (index === 0) {
+        img.style.border = "3px solid #007bff";
+      }
+
+      // Click to select cover
+      img.addEventListener("click", () => {
+        selectedCoverIndex = index;
+
+        // Remove border from all
+        previewDiv.querySelectorAll("img").forEach(i => {
       });
     });
 
@@ -265,6 +280,7 @@
   </script>
 </body>
 </html>
+
 
 
 
