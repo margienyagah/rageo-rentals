@@ -176,48 +176,40 @@
       }
     });
 
- let selectedFiles = [];
+// Track selected cover image index
+let selectedCoverIndex = 0;
 
+// Preview + Select Cover
 imageInput.addEventListener("change", () => {
   previewDiv.innerHTML = "";
-  selectedFiles = [...imageInput.files];
+  selectedCoverIndex = 0;
 
-  renderPreview();
-});
+  const files = [...imageInput.files];
 
-function renderPreview() {
-  previewDiv.innerHTML = "";
-
-  selectedFiles.forEach((file, index) => {
+  files.forEach((file, index) => {
     const reader = new FileReader();
 
     reader.onload = (e) => {
       const img = document.createElement("img");
       img.src = e.target.result;
-      img.draggable = true;
-      img.dataset.index = index;
-      img.style.cursor = "grab";
+      img.style.cursor = "pointer";
 
-      // Drag start
-      img.addEventListener("dragstart", (ev) => {
-        ev.dataTransfer.setData("text/plain", index);
-      });
+      // Highlight first image by default
+      if (index === 0) {
+        img.style.border = "3px solid #007bff";
+      }
 
-      // Drag over
-      img.addEventListener("dragover", (ev) => {
-        ev.preventDefault();
-      });
+      // Click to select cover image
+      img.addEventListener("click", () => {
+        selectedCoverIndex = index;
 
-      // Drop
-      img.addEventListener("drop", (ev) => {
-        ev.preventDefault();
-        const fromIndex = parseInt(ev.dataTransfer.getData("text/plain"));
-        const toIndex = parseInt(img.dataset.index);
+        // Remove border from all images
+        previewDiv.querySelectorAll("img").forEach(i => {
+          i.style.border = "none";
+        });
 
-        const moved = selectedFiles.splice(fromIndex, 1)[0];
-        selectedFiles.splice(toIndex, 0, moved);
-
-        renderPreview();
+        // Add border to selected image
+        img.style.border = "3px solid #007bff";
       });
 
       previewDiv.appendChild(img);
@@ -226,7 +218,6 @@ function renderPreview() {
     reader.readAsDataURL(file);
   });
 });
-
     // Submission
     let isSubmitting = false;
     const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -277,7 +268,11 @@ function renderPreview() {
           imageUrls.push(data.secure_url);
           await sleep(120);
         }
-
+// Move selected cover image to first position
+if (selectedCoverIndex !== 0) {
+  const cover = imageUrls.splice(selectedCoverIndex, 1)[0];
+  imageUrls.unshift(cover);
+}
         submitBtn.textContent = "Saving listing...";
         const docRef = await addDoc(collection(db, "listings"), {
           title, location, price, description,
@@ -302,6 +297,7 @@ function renderPreview() {
   </script>
 </body>
 </html>
+
 
 
 
