@@ -176,17 +176,20 @@
       }
     });
 
-   // Track selected cover image index
+   /// Track selected cover image index
 let selectedCoverIndex = 0;
 
 // Preview + Select Cover
 imageInput.addEventListener("change", () => {
   previewDiv.innerHTML = "";
-  selectedCoverIndex = 0; // default first image is cover
+  selectedCoverIndex = 0;
 
-  [...imageInput.files].forEach((file, index) => {
+  const files = [...imageInput.files];
+
+  files.forEach((file, index) => {
     const reader = new FileReader();
-    reader.onload = e => {
+
+    reader.onload = (e) => {
       const img = document.createElement("img");
       img.src = e.target.result;
       img.style.cursor = "pointer";
@@ -196,14 +199,25 @@ imageInput.addEventListener("change", () => {
         img.style.border = "3px solid #007bff";
       }
 
-      // Click to select cover
+      // Click to select cover image
       img.addEventListener("click", () => {
         selectedCoverIndex = index;
 
-        // Remove border from all
+        // Remove border from all images
         previewDiv.querySelectorAll("img").forEach(i => {
+          i.style.border = "none";
+        });
+
+        // Add border to selected image
+        img.style.border = "3px solid #007bff";
       });
-    });
+
+      previewDiv.appendChild(img);
+    };
+
+    reader.readAsDataURL(file);
+  });
+});
 
     // Submission
     let isSubmitting = false;
@@ -255,7 +269,11 @@ imageInput.addEventListener("change", () => {
           imageUrls.push(data.secure_url);
           await sleep(120);
         }
-
+// Move selected cover image to first position
+if (selectedCoverIndex !== 0) {
+  const cover = imageUrls.splice(selectedCoverIndex, 1)[0];
+  imageUrls.unshift(cover);
+}
         submitBtn.textContent = "Saving listing...";
         const docRef = await addDoc(collection(db, "listings"), {
           title, location, price, description,
@@ -280,6 +298,7 @@ imageInput.addEventListener("change", () => {
   </script>
 </body>
 </html>
+
 
 
 
