@@ -238,7 +238,7 @@ imageInput.addEventListener("change", () => {
       const location = document.getElementById("location").value.trim();
       const price = document.getElementById("price").value.trim();
       const description = document.getElementById("description").value.trim();
-      const files = selectedFiles;
+      const files = [...imageInput.files];
 
       if (!title || !location || !price || files.length === 0) {
         alert("Complete all required fields and upload images.");
@@ -297,6 +297,7 @@ if (selectedCoverIndex !== 0) {
   </script>
 </body>
 </html>
+
 
 
 
