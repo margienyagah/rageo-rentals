@@ -102,6 +102,70 @@ header img{
 .delete-btn{
   background:#dc3545;
 }
+  document
+.querySelectorAll(".edit-btn")
+.forEach(btn => {
+
+btn.addEventListener("click", async () => {
+
+const id = btn.dataset.id;
+
+const title = prompt(
+"Edit title:",
+btn.dataset.title
+);
+
+if(title === null) return;
+
+const location = prompt(
+"Edit location:",
+btn.dataset.location
+);
+
+if(location === null) return;
+
+const price = prompt(
+"Edit price:",
+btn.dataset.price
+);
+
+if(price === null) return;
+
+const description = prompt(
+"Edit description:",
+btn.dataset.description
+);
+
+if(description === null) return;
+
+try{
+
+await updateDoc(
+doc(db,"listings",id),
+{
+title,
+location,
+price,
+description
+}
+);
+
+alert("Property updated successfully.");
+
+loadListings(auth.currentUser.email);
+
+}
+catch(err){
+
+console.error(err);
+
+alert("Failed to update property.");
+
+}
+
+});
+
+});
 
 .logout-btn{
   background:#dc3545;
@@ -176,7 +240,8 @@ query,
 where,
 getDocs,
 deleteDoc,
-doc
+doc,
+updateDoc
 }
 from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
@@ -292,19 +357,15 @@ ${data.price || ""}
 
 <div class="actions">
 
-<a
-class="view-btn"
-href="property.html?id=${docSnap.id}"
-target="_blank">
-View
-</a>
-
-<a
-class="view-btn"
-style="background:#ff9800"
-href="edit-listing.html?id=${docSnap.id}">
+<button
+class="view-btn edit-btn"
+data-id="${docSnap.id}"
+data-title="${data.title || ''}"
+data-location="${data.location || ''}"
+data-price="${data.price || ''}"
+data-description="${data.description || ''}">
 Edit
-</a>
+</button>
 
 <button
 class="delete-btn"
