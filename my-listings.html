@@ -7,136 +7,353 @@
 <title>My Listings | Rageo Rentals</title>
 
 <style>
+
 body{
-  font-family:Arial,sans-serif;
-  background:#f5f6fa;
-  margin:0;
+    font-family:Arial,sans-serif;
+    background:#f5f6fa;
+    margin:0;
 }
 
 header{
-  background:white;
-  padding:15px 20px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  box-shadow:0 2px 6px rgba(0,0,0,.1);
+    background:white;
+    padding:15px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 2px 6px rgba(0,0,0,.1);
 }
 
 header img{
-  height:55px;
+    height:55px;
 }
 
 .container{
-  max-width:1100px;
-  margin:30px auto;
-  padding:15px;
+    max-width:1100px;
+    margin:30px auto;
+    padding:15px;
 }
 
 .top-actions{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
 }
 
 .add-btn{
-  background:#28a745;
-  color:white;
-  text-decoration:none;
-  padding:12px 18px;
-  border-radius:6px;
-  font-weight:bold;
+    background:#28a745;
+    color:white;
+    text-decoration:none;
+    padding:12px 18px;
+    border-radius:6px;
+    font-weight:bold;
 }
 
 .card{
-  background:white;
-  border-radius:10px;
-  overflow:hidden;
-  margin-bottom:20px;
-  display:flex;
-  flex-wrap:wrap;
-  box-shadow:0 2px 10px rgba(0,0,0,.1);
+    background:white;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:20px;
+    display:flex;
+    flex-wrap:wrap;
+    box-shadow:0 2px 10px rgba(0,0,0,.1);
 }
 
 .card img{
-  width:280px;
-  height:200px;
-  object-fit:cover;
+    width:280px;
+    height:200px;
+    object-fit:cover;
 }
 
 .info{
-  flex:1;
-  padding:15px;
+    flex:1;
+    padding:15px;
 }
 
 .info h3{
-  margin-top:0;
+    margin-top:0;
 }
 
 .price{
-  color:#28a745;
-  font-weight:bold;
-  font-size:1.2em;
+    color:#28a745;
+    font-weight:bold;
+    font-size:1.2em;
 }
 
 .actions{
-  margin-top:15px;
+    margin-top:15px;
 }
 
-.actions a,
 .actions button{
-  padding:10px 14px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  margin-right:8px;
-  text-decoration:none;
-  color:white;
-  font-weight:bold;
+    padding:10px 14px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    margin-right:8px;
+    color:white;
+    font-weight:bold;
 }
 
-.view-btn{
-  background:#007bff;
+.edit-btn{
+    background:#ff9800;
 }
 
 .delete-btn{
-  background:#dc3545;
+    background:#dc3545;
 }
-  document
+
+.logout-btn{
+    background:#dc3545;
+    color:white;
+    border:none;
+    padding:8px 12px;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+.empty{
+    text-align:center;
+    padding:50px;
+    background:white;
+    border-radius:10px;
+}
+
+@media(max-width:768px){
+
+.card{
+    flex-direction:column;
+}
+
+.card img{
+    width:100%;
+}
+
+}
+
+</style>
+</head>
+<body>
+
+<header>
+
+<div style="display:flex;align-items:center;gap:10px;">
+<img src="logo.jpg" alt="Logo">
+<h2>My Listings</h2>
+</div>
+
+<div id="userInfo"></div>
+
+</header>
+
+<div class="container">
+
+<div class="top-actions">
+
+<h2>Your Properties</h2>
+
+<a href="add-listing.html" class="add-btn">
+➕ Add New Listing
+</a>
+
+</div>
+
+<div id="listingsContainer">
+<p>Loading listings...</p>
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+query,
+where,
+getDocs,
+deleteDoc,
+doc,
+updateDoc
+}
+from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+import {
+getAuth,
+onAuthStateChanged,
+signOut
+}
+from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyBOoGvZDvzp-CHLVllJAujTdo84vxcz_hM",
+authDomain: "rageo-rentals.firebaseapp.com",
+projectId: "rageo-rentals"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+const listingsContainer =
+document.getElementById("listingsContainer");
+
+const userInfo =
+document.getElementById("userInfo");
+
+onAuthStateChanged(auth,(user)=>{
+
+if(!user){
+window.location.href="login.html";
+return;
+}
+
+userInfo.innerHTML=`
+${user.email}
+<button class="logout-btn" id="logoutBtn">
+Logout
+</button>
+`;
+
+document.getElementById("logoutBtn").onclick=()=>{
+signOut(auth)
+.then(()=>window.location.href="login.html");
+};
+
+loadListings(user.email);
+
+});
+
+async function loadListings(email){
+
+listingsContainer.innerHTML="Loading...";
+
+try{
+
+const q=query(
+collection(db,"listings"),
+where("user","==",email)
+);
+
+const snapshot=await getDocs(q);
+
+if(snapshot.empty){
+
+listingsContainer.innerHTML=`
+<div class="empty">
+<h3>No properties uploaded yet</h3>
+<p>Click Add New Listing to post your first property.</p>
+</div>
+`;
+
+return;
+}
+
+listingsContainer.innerHTML="";
+
+snapshot.forEach(docSnap=>{
+
+const data=docSnap.data();
+
+const card=document.createElement("div");
+
+card.className="card";
+
+card.innerHTML=`
+
+<img src="${data.images?.[0] || 'logo.jpg'}">
+
+<div class="info">
+
+<h3>${data.title || ""}</h3>
+
+<p>${data.location || ""}</p>
+
+<div class="price">
+${data.price || ""}
+</div>
+
+<div class="actions">
+
+<button
+class="edit-btn"
+data-id="${docSnap.id}"
+data-title="${data.title || ''}"
+data-location="${data.location || ''}"
+data-price="${data.price || ''}"
+data-description="${data.description || ''}">
+Edit
+</button>
+
+<button
+class="delete-btn"
+data-id="${docSnap.id}">
+Delete
+</button>
+
+</div>
+
+</div>
+`;
+
+listingsContainer.appendChild(card);
+
+});
+
+attachEditButtons();
+attachDeleteButtons();
+
+}
+catch(err){
+
+console.error(err);
+
+listingsContainer.innerHTML=
+"<p>Error loading listings.</p>";
+
+}
+
+}
+
+function attachEditButtons(){
+
+document
 .querySelectorAll(".edit-btn")
-.forEach(btn => {
+.forEach(btn=>{
 
-btn.addEventListener("click", async () => {
+btn.addEventListener("click",async()=>{
 
-const id = btn.dataset.id;
+const id=btn.dataset.id;
 
-const title = prompt(
+const title=prompt(
 "Edit title:",
 btn.dataset.title
 );
 
-if(title === null) return;
+if(title===null) return;
 
-const location = prompt(
+const location=prompt(
 "Edit location:",
 btn.dataset.location
 );
 
-if(location === null) return;
+if(location===null) return;
 
-const price = prompt(
+const price=prompt(
 "Edit price:",
 btn.dataset.price
 );
 
-if(price === null) return;
+if(price===null) return;
 
-const description = prompt(
+const description=prompt(
 "Edit description:",
 btn.dataset.description
 );
 
-if(description === null) return;
+if(description===null) return;
 
 try{
 
@@ -167,220 +384,9 @@ alert("Failed to update property.");
 
 });
 
-.logout-btn{
-  background:#dc3545;
-  color:white;
-  border:none;
-  padding:8px 12px;
-  border-radius:5px;
-  cursor:pointer;
 }
 
-.empty{
-  text-align:center;
-  padding:50px;
-  background:white;
-  border-radius:10px;
-}
-
-@media(max-width:768px){
-
-.card{
-  flex-direction:column;
-}
-
-.card img{
-  width:100%;
-}
-}
-</style>
-</head>
-<body>
-
-<header>
-
-<div style="display:flex;align-items:center;gap:10px;">
-<img src="logo.jpg" alt="Logo">
-<h2>My Listings</h2>
-</div>
-
-<div id="userInfo"></div>
-
-</header>
-
-<div class="container">
-
-<div class="top-actions">
-
-<h2>Your Properties</h2>
-
-<a href="add-listing.html" class="add-btn">
-➕ Add New Listing
-</a>
-
-</div>
-
-<div id="listingsContainer">
-
-<p>Loading listings...</p>
-
-</div>
-
-</div>
-
-<script type="module">
-
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-
-import {
-getFirestore,
-collection,
-query,
-where,
-getDocs,
-deleteDoc,
-doc,
-updateDoc
-}
-from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-import {
-getAuth,
-onAuthStateChanged,
-signOut
-}
-from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-
-const firebaseConfig = {
-
-apiKey: "AIzaSyBOoGvZDvzp-CHLVllJAujTdo84vxcz_hM",
-authDomain: "rageo-rentals.firebaseapp.com",
-projectId: "rageo-rentals"
-
-};
-
-const app = initializeApp(firebaseConfig);
-
-const db = getFirestore(app);
-
-const auth = getAuth(app);
-
-const listingsContainer =
-document.getElementById("listingsContainer");
-
-const userInfo =
-document.getElementById("userInfo");
-
-onAuthStateChanged(auth, async (user)=>{
-
-if(!user){
-
-window.location.href="login.html";
-return;
-
-}
-
-userInfo.innerHTML=`
-${user.email}
-<button class="logout-btn" id="logoutBtn">
-Logout
-</button>
-`;
-
-document.getElementById("logoutBtn")
-.onclick=()=>{
-
-signOut(auth)
-.then(()=>window.location.href="login.html");
-
-};
-
-loadListings(user.email);
-
-});
-
-async function loadListings(email){
-
-listingsContainer.innerHTML="Loading...";
-
-try{
-
-const q=query(
-collection(db,"listings"),
-where("user","==",email)
-);
-
-const snapshot=await getDocs(q);
-
-if(snapshot.empty){
-
-listingsContainer.innerHTML=`
-<div class="empty">
-
-<h3>No properties uploaded yet</h3>
-
-<p>
-Click Add New Listing to post your first property.
-</p>
-
-</div>
-`;
-
-return;
-
-}
-
-listingsContainer.innerHTML="";
-
-snapshot.forEach(docSnap=>{
-
-const data=docSnap.data();
-
-const card=document.createElement("div");
-
-card.className="card";
-
-card.innerHTML=`
-
-<img src="${data.images?.[0] || 'logo.jpg'}">
-
-<div class="info">
-
-<h3>${data.title || ""}</h3>
-
-<p>${data.location || ""}</p>
-
-<div class="price">
-${data.price || ""}
-</div>
-
-<div class="actions">
-
-<button
-class="view-btn edit-btn"
-data-id="${docSnap.id}"
-data-title="${data.title || ''}"
-data-location="${data.location || ''}"
-data-price="${data.price || ''}"
-data-description="${data.description || ''}">
-Edit
-</button>
-
-<button
-class="delete-btn"
-data-id="${docSnap.id}">
-Delete
-</button>
-
-</div>
-
-</div>
-`;
-
-listingsContainer.appendChild(card);
-
-});
+function attachDeleteButtons(){
 
 document
 .querySelectorAll(".delete-btn")
@@ -390,12 +396,11 @@ btn.addEventListener("click",async()=>{
 
 const id=btn.dataset.id;
 
-const confirmDelete=
-confirm(
+if(!confirm(
 "Delete this property permanently?"
-);
-
-if(!confirmDelete) return;
+)){
+return;
+}
 
 try{
 
@@ -412,25 +417,13 @@ catch(err){
 
 console.error(err);
 
-alert(
-"Failed to delete property."
-);
+alert("Failed to delete property.");
 
 }
 
 });
 
 });
-
-}
-catch(err){
-
-console.error(err);
-
-listingsContainer.innerHTML=
-"<p>Error loading listings.</p>";
-
-}
 
 }
 
