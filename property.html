@@ -5,8 +5,51 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Property | Rageo Rentals</title>
-  <meta name="description" content="Loading property..." />
-  <link rel="canonical" href="https://rageoproperties.com/">
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta name="description"
+content="Verified houses, apartments and maisonettes for rent and sale in Nairobi, Kenya.">
+
+<meta name="keywords"
+content="houses for rent Nairobi, apartments to let Nairobi, Karen houses, Kilimani apartments, Kileleshwa rentals, Kenya property listings">
+
+<meta name="author"
+content="Rageo Rentals">
+
+<meta property="og:type"
+content="website">
+
+<meta property="og:site_name"
+content="Rageo Rentals">
+
+<meta property="og:title"
+content="Property Listing | Rageo Rentals">
+
+<meta property="og:description"
+content="Verified houses and apartments for rent and sale in Nairobi.">
+
+<meta property="og:image"
+content="https://rageoproperties.com/logo.jpg">
+
+<meta property="og:url"
+content="https://rageoproperties.com">
+
+<meta name="twitter:card"
+content="summary_large_image">
+
+<meta name="twitter:title"
+content="Property Listing | Rageo Rentals">
+
+<meta name="twitter:description"
+content="Verified houses and apartments for rent and sale in Nairobi.">
+
+<meta name="twitter:image"
+content="https://rageoproperties.com/logo.jpg">
+
+<link rel="canonical"
+href="https://rageoproperties.com/">
 
   <style>
     :root {
@@ -210,8 +253,73 @@
         container.innerHTML = '<p>Property not found.</p>';
         return;
       }
-      const data = snap.data();
-      document.title = (data.title || 'Property') + ' | Rageo Rentals';
+      const data = snap.data();const schema = {
+
+"@context":"https://schema.org",
+
+"@type":"Residence",
+
+"name":data.title || "",
+
+"description":data.description || "",
+
+"address":{
+"@type":"PostalAddress",
+"addressLocality":data.location || ""
+},
+
+"image":data.images || [],
+
+"offers":{
+"@type":"Offer",
+"price":String(data.price || "")
+}
+};
+
+const script =
+document.createElement("script");
+
+script.type =
+"application/ld+json";
+
+script.text =
+JSON.stringify(schema);
+
+document.head.appendChild(script);
+
+const slug =
+new URL(location.href)
+.searchParams.get("title") || "";
+
+document.title =
+`${data.title || "Property"} | ${data.location || "Nairobi"} | Rageo Rentals`;
+
+const metaDescription =
+`${data.title || ""} located in ${data.location || "Nairobi"} for ${data.price || ""}. ${data.description || ""}`;
+
+let descTag =
+document.querySelector(
+'meta[name="description"]'
+);
+
+if(descTag){
+descTag.setAttribute(
+"content",
+metaDescription.substring(0,160)
+);
+}
+
+let canonical =
+document.querySelector(
+'rel="canonical"'
+);
+
+if(canonical){
+
+canonical.href =
+`${location.origin}/property.html?id=${id}&title=${slug}`;
+
+}
 
       const images = Array.isArray(data.images) && data.images.length ? data.images : [];
 
@@ -281,7 +389,14 @@
 
       const shareInput = document.createElement('input');
       shareInput.type='text';
-      shareInput.value=`${location.origin}${location.pathname}?id=${id}`;
+     const seoSlug =
+(data.title || "property")
+.toLowerCase()
+.replace(/[^a-z0-9]+/g,"-")
+.replace(/^-|-$/g,"");
+
+shareInput.value =
+`${location.origin}/property.html?id=${id}&title=${seoSlug}`;
       shareInput.readOnly=true;
       shareInput.style='display:none;width:100%;margin-top:8px;padding:6px;';
       right.appendChild(shareInput);
